@@ -1,25 +1,17 @@
-const CACHE_NAME = 'kevin-fusion-v1';
+const CACHE_NAME = 'kevin-fusion-v2';
 const ASSETS = [
-  '/',
-  '/index.html',
+  '/', '/index.html', '/admin.html', '/manifest.json',
   '/css/style.css',
-  '/js/app.js',
-  '/js/admin.js',
-  '/js/third-party.js',
-  '/assets/car.png',
-  '/assets/justice.png',
-  '/manifest.json'
+  '/js/app.js', '/js/admin.js', '/js/third-party.js', '/js/crypto-utils.js',
+  '/assets/car.png', '/assets/justice.png',
+  '/assets/icon-192.png', '/assets/icon-512.png'
 ];
 
-// Installation : mise en cache des ressources principales
 self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
-  );
+  e.waitUntil(caches.open(CACHE_NAME).then((c) => c.addAll(ASSETS)));
   self.skipWaiting();
 });
 
-// Activation : nettoyage des anciens caches
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys().then((keys) =>
@@ -29,9 +21,8 @@ self.addEventListener('activate', (e) => {
   self.clients.claim();
 });
 
-// Interception des requêtes : priorité au cache
 self.addEventListener('fetch', (e) => {
   e.respondWith(
-    caches.match(e.request).then((cached) => cached || fetch(e.request))
+    caches.match(e.request).then((cached) => cached || fetch(e.request).catch(() => cached))
   );
 });
