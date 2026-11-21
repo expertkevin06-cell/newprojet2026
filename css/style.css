@@ -1,18 +1,30 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+:root {
+  --bg: #0f172a;
+  --panel: #1e293b;
+  --panel-2: #273549;
+  --border: #475569;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --primary: #3b82f6;
+  --success: #10b981;
+  --danger: #ef4444;
+}
+
 body {
-  font-family: system-ui, -apple-system, sans-serif;
-  background: #0f172a;
-  color: #e2e8f0;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
   min-height: 100vh;
   overflow-x: hidden;
   position: relative;
 }
 
-/* Arrière-plan animé */
+/* ---------- Arrière-plan animé ---------- */
 .bg-layer {
   position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
+  inset: 0;
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
@@ -20,94 +32,196 @@ body {
 
 .moving-car {
   position: absolute;
-  bottom: 10%;
-  width: 120px;
-  animation: drive 12s linear infinite;
-  opacity: 0.25;
+  bottom: 12%;
+  width: 130px;
+  opacity: 0.22;
+  animation: drive 14s linear infinite;
 }
 
 @keyframes drive {
-  0% { left: -150px; }
+  0%   { left: -160px; }
   100% { left: 110%; }
 }
 
 .walking-goddess {
   position: absolute;
-  bottom: 5%;
-  right: 5%;
-  width: 80px;
-  animation: walk 3s ease-in-out infinite alternate;
-  opacity: 0.2;
+  bottom: 6%;
+  right: 4%;
+  width: 90px;
+  opacity: 0.18;
+  animation: walk 2.8s ease-in-out infinite alternate;
 }
 
 @keyframes walk {
-  from { transform: translateY(0) rotate(-5deg); }
-  to { transform: translateY(-10px) rotate(5deg); }
+  from { transform: translateY(0) rotate(-4deg); }
+  to   { transform: translateY(-12px) rotate(4deg); }
 }
 
-/* En-tête */
+/* ---------- En-tête ---------- */
 header {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 1.5rem;
-  background: rgba(30, 41, 59, 0.8);
+  background: rgba(30, 41, 59, 0.85);
   backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border);
 }
 
-h1 { font-size: 1.25rem; }
+h1 { font-size: 1.2rem; letter-spacing: 0.3px; }
+h2 { font-size: 1.05rem; margin-bottom: 0.6rem; }
+h3 { font-size: 0.95rem; margin-bottom: 0.4rem; color: var(--primary); }
 
 #adminBtn {
   padding: 0.5rem 1rem;
-  background: #3b82f6;
+  background: var(--primary);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
 }
+#adminBtn:hover { background: #2563eb; }
 
-.hidden { display: none; }
+.hidden { display: none !important; }
 
-/* Filtres */
+/* ---------- Filtres ---------- */
 .filters {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: flex;
   gap: 1rem;
   padding: 1rem 1.5rem;
   flex-wrap: wrap;
-  background: rgba(30, 41, 59, 0.6);
+  align-items: center;
+  background: rgba(30, 41, 59, 0.7);
+  border-bottom: 1px solid var(--border);
 }
 
-select, label {
+select, input[type="text"], input[type="password"] {
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
   font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
 }
+select:focus, input:focus { border-color: var(--primary); }
 
-select {
-  padding: 0.4rem 0.8rem;
-  border-radius: 6px;
-  border: 1px solid #475569;
-  background: #1e293b;
-  color: #e2e8f0;
+label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.88rem;
+  cursor: pointer;
+  color: var(--muted);
 }
+label input { accent-color: var(--primary); }
 
-label { display: flex; align-items: center; gap: 0.3rem; cursor: pointer; }
-
-/* Zone de contenu principal */
+/* ---------- Zone principale ---------- */
 #moduleContainer {
   position: relative;
-  z-index: 1;
-  height: calc(100vh - 140px);
-  margin: 0 1rem 1rem;
+  z-index: 2;
+  height: calc(100vh - 200px);
+  margin: 1rem;
   border-radius: 12px;
   overflow: hidden;
-  background: #1e293b;
+  background: var(--panel);
+  border: 1px solid var(--border);
 }
 
-#moduleFrame {
-  width: 100%;
-  height: 100%;
-  border: none;
+#moduleFrame { width: 100%; height: 100%; border: none; }
+
+/* ---------- Base technique ---------- */
+#techPanel {
+  position: relative;
+  z-index: 2;
+  margin: 0 1rem 1rem;
+  padding: 1rem;
+  background: var(--panel-2);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  min-height: 60px;
 }
+
+#techContent h3 { color: var(--primary); margin-bottom: 0.5rem; }
+#techContent p { color: var(--muted); line-height: 1.5; font-size: 0.9rem; }
+
+/* ---------- Cartes ---------- */
+.card {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 0.8rem;
+}
+
+/* ---------- Accès tiers ---------- */
+.access-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 0.5rem;
+  border-radius: 8px;
+  background: var(--panel-2);
+  border-left: 4px solid var(--border);
+}
+.access-item.granted { border-left-color: var(--success); }
+.access-item.revoked { border-left-color: var(--danger); }
+
+.access-item button {
+  padding: 0.35rem 0.8rem;
+  background: var(--danger);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+/* ---------- Boutons génériques ---------- */
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+.btn:hover { opacity: 0.85; }
+.btn-primary { background: var(--primary); color: white; }
+.btn-success { background: var(--success); color: white; }
+.btn-danger  { background: var(--danger); color: white; }
+
+/* ---------- Page admin ---------- */
+.admin-main {
+  position: relative;
+  z-index: 2;
+  padding: 2rem;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.section { margin-bottom: 2rem; }
+
+#passwordStatus {
+  margin: 0.5rem 0 1rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+#passwordStatus.ok { color: var(--success); }
+#passwordStatus.warn { color: #f59e0b; }
+#passwordStatus.err { color: var(--danger); }
+
+.row {
+  display: flex;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+.row input { flex: 1; }
