@@ -3,59 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#1e293b">
   <title>Fusion Projet Kevin</title>
-  <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-  <div class="bg-layer">
-    <img src="assets/car.png" class="moving-car" alt="">
-    <img src="assets/justice.png" class="walking-goddess" alt="">
+  <!-- ÉCRAN DE VERROUILLAGE AU DÉMARRAGE -->
+  <div id="lockScreen" style="position:fixed; inset:0; background:#0f172a; z-index:9999; display:flex; flex-direction:column; justify-content:center; align-items:center; color:white; font-family:sans-serif;">
+    <h2 style="margin-bottom:1rem;">Accès protégé</h2>
+    <p style="color:#94a3b8; margin-bottom:1rem;">Entrez le mot de passe administrateur</p>
+    <input type="password" id="passwordInput" placeholder="Mot de passe" style="padding:0.8rem; border-radius:8px; border:1px solid #475569; background:#1e293b; color:white; width:250px; text-align:center; margin-bottom:1rem;">
+    <button onclick="checkPassword()" style="padding:0.8rem 2rem; background:#3b82f6; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Déverrouiller</button>
+    <p id="errorMsg" style="color:#ef4444; margin-top:1rem; display:none;">Mot de passe incorrect</p>
   </div>
 
-  <header>
-    <h1>Tableau de bord Kevin</h1>
-    <button id="adminBtn" class="hidden">Mode Admin</button>
-  </header>
+  <!-- LE RESTE DE VOTRE APPLICATION (masqué au démarrage) -->
+  <div id="appContent" style="display:none;">
+    <header style="padding:1rem; background:#1e293b; display:flex; justify-content:space-between; align-items:center;">
+      <h1 style="margin:0; font-size:1.2rem;">Tableau de bord Kevin</h1>
+      <button id="adminBtn" class="hidden" style="padding:0.5rem 1rem; background:#3b82f6; color:white; border:none; border-radius:6px; cursor:pointer;">Mode Admin</button>
+    </header>
+    
+    <main style="padding: 2rem;">
+      <h2>Bienvenue</h2>
+      <p>Vous êtes connecté en tant qu'administrateur.</p>
+    </main>
+  </div>
 
-  <section class="filters">
-    <select id="moduleSelect">
-      <option value="diagnostic">Auto-Diagnostic</option>
-      <option value="bykevin">ByKevin</option>
-      <option value="aide">Aide Technique</option>
-      <option value="incendie">Étude Incendie</option>
-      <option value="tech2026">2026Tech</option>
-      <option value="autolegal">Auto-Legal (Lovable)</option>
-    </select>
-
-    <select id="techBaseSelect">
-      <option value="">— Base technique véhicule —</option>
-      <option value="moteur">Moteur / Injection</option>
-      <option value="freinage">Freinage / ABS</option>
-      <option value="electricite">Électricité / Calculateurs</option>
-      <option value="carrosserie">Carrosserie / Structure</option>
-      <option value="legal">Cadre juridique véhicule</option>
-    </select>
-
-    <label><input type="checkbox" value="urgence" checked> Urgence</label>
-    <label><input type="checkbox" value="standard"> Standard</label>
-    <label><input type="checkbox" value="archive"> Archive</label>
-  </section>
-
-  <section id="techPanel">
-    <div id="techContent">
-      <p style="color:#94a3b8;">Sélectionnez une base technique dans le menu déroulant.</p>
-    </div>
-  </section>
-
-  <main id="moduleContainer">
-    <iframe id="moduleFrame" src="https://expertkevin06-cell.github.io/auto-diagnostic/" title="Module"></iframe>
-  </main>
-
-  <script src="js/crypto-utils.js"></script>
   <script src="js/app.js"></script>
-  <script src="js/third-party.js"></script>
 </body>
 </html>
