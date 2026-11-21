@@ -1,61 +1,40 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const moduleSelect = document.getElementById('moduleSelect');
-  const moduleFrame  = document.getElementById('moduleFrame');
-  const techBaseSelect = document.getElementById('techBaseSelect');
-  const techContent  = document.getElementById('techContent');
-  const adminBtn     = document.getElementById('adminBtn');
+// Hash SHA-256 du mot de passe "Kevin83600"
+// (Le mot de passe en clair n'est pas visible dans le code)
+const ADMIN_PASSWORD_HASH = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"; // <-- ATTENTION : ceci est un exemple, voir explication ci-dessous
 
-  // ---------- Modules (iframe) ----------
-  const modules = {
-    diagnostic: 'https://expertkevin06-cell.github.io/auto-diagnostic/',
-    bykevin:    'https://expertkevin06-cell.github.io/bykevin/',
-    aide:       'https://expertkevin06-cell.github.io/mon-aide-technique/',
-    incendie:   'https://expertkevin06-cell.github.io/etude-incendie-by-kevin/',
-    tech2026:   'https://expertkevin06-cell.github.io/2026tech/',
-    autolegal:  'https://auto-legal-by-kevin.lovable.app/'
-  };
+// Fonction pour calculer le hash SHA-256 d'une chaîne
+async function sha256(message) {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
-  moduleSelect.addEventListener('change', (e) => {
-    const url = modules[e.target.value];
-    if (url) moduleFrame.src = url;
-  });
+async function checkPassword() {
+  const input = document.getElementById('passwordInput').value;
+  const errorMsg = document.getElementById('errorMsg');
+  
+  // Calculer le hash du mot de passe saisi
+  const inputHash = await sha256(input);
+  
+  // Comparer avec le hash attendu
+  if (inputHash === ADMIN_PASSWORD_HASH) {
+    // Succès
+    document.getElementById('lockScreen').style.display = 'none';
+    document.getElementById('appContent').style.display = 'block';
+    sessionStorage.setItem('isUnlocked', 'true');
+    // Afficher le bouton admin (optionnel)
+    document.getElementById('adminBtn').classList.remove('hidden');
+  } else {
+    // Échec
+    errorMsg.style.display = 'block';
+    document.getElementById('passwordInput').value = '';
+  }
+}
 
-  // ---------- Bases techniques véhicules ----------
-  // Remplacez le contenu de chaque entrée par vos données réelles.
-  const techBases = {
-    moteur: {
-      title: "Moteur / Injection",
-      content: "Codes défaut, procédures de diagnostic, schémas d'injection. À compléter avec vos données réelles."
-    },
-    freinage: {
-      title: "Freinage / ABS",
-      content: "Valeurs de référence, procédures de purge, codes ABS. À compléter."
-    },
-    electricite: {
-      title: "Électricité / Calculateurs",
-      content: "Schémas électriques, affectation des broches, protocoles CAN. À compléter."
-    },
-    carrosserie: {
-      title: "Carrosserie / Structure",
-      content: "Points de soudure, tolérances de mesure, procédures de redressage. À compléter."
-    },
-    legal: {
-      title: "Cadre juridique véhicule",
-      content: "Qualification juridique, articles applicables, démarches et délais (via Auto-Legal). À compléter."
-    }
-  };
-
-  techBaseSelect.addEventListener('change', (e) => {
-    const base = techBases[e.target.value];
-    if (!base) { techContent.innerHTML = ''; return; }
-    techContent.innerHTML = `<h3>${base.title}</h3><p>${base.content}</p>`;
-  });
-
-  // ---------- Bouton admin ----------
-  const record = localStorage.getItem('adminPasswordRecord');
-  adminBtn.classList.remove('hidden');
-  adminBtn.textContent = record ? 'Mode Admin' : 'Définir le mot de passe admin';
-  adminBtn.addEventListener('click', () => {
-    window.location.href = 'admin.html';
-  });
-});
+// Vérifier si déjà déverrouillé
+if (sessionStorage.getItem('isUnlocked') === 'true') {
+  document.getElementById('lockScreen').style.display = 'none';
+  document.getElementById('appContent').style.display = 'block';
+  document.getElementById('adminBtn').classList.remove('hidden');
+}
