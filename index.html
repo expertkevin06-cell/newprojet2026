@@ -11,15 +11,12 @@
 
   <style>
     body { font-family: system-ui, sans-serif; background-color: #0f172a; color: white; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-    
-    /* Écran de verrouillage */
     #lockScreen { position: fixed; inset: 0; background: #0f172a; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
     input[type="password"] { padding: 0.8rem; border-radius: 8px; border: 1px solid #475569; background: #1e293b; color: white; width: 250px; text-align: center; margin-bottom: 1rem; font-size: 1.2rem; }
     button { padding: 0.8rem 2rem; background: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; }
     button:active { background: #2563eb; }
     .hidden { display: none !important; }
     
-    /* Styles de l'application */
     #appContent { display: flex; flex-direction: column; height: 100vh; }
     header { padding: 1rem; background: #1e293b; display: flex; justify-content: space-between; align-items: center; z-index: 10; border-bottom: 1px solid #334155; }
     .filters { padding: 1rem; background: #1e293b; display: flex; gap: 1rem; flex-wrap: wrap; z-index: 10; border-bottom: 1px solid #334155; }
@@ -45,7 +42,6 @@
       <h1 style="margin: 0; font-size: 1.2rem;">Tableau de bord Kevin</h1>
     </header>
     
-    <!-- Filtres et Menus Déroulants -->
     <div class="filters">
       <select id="moduleSelect">
         <option value="diagnostic">Auto-Diagnostic</option>
@@ -55,10 +51,9 @@
         <option value="tech2026">2026Tech</option>
         <option value="autolegal">Auto-Legal (Lovable)</option>
         <option value="rapport">Expert Auto (Rapport Juridique)</option>
-        <option value="autodiag" selected>AutoDiag Pro (Formation)</option>
+        <option value="autodiag">AutoDiag Pro (Formation)</option>
       </select>
 
-      <!-- Filtre Fonctionnel -->
       <select id="techBaseSelect">
         <option value="">— Filtrer par composant —</option>
         <option value="moteur">Moteur / Injection</option>
@@ -70,10 +65,8 @@
       </select>
     </div>
 
-    <!-- Zone d'affichage des projets -->
     <main>
-      <!-- On démarre sur AutoDiag Pro pour que le filtre soit utile -->
-      <iframe id="moduleFrame" src="https://expertkevin06-cell.github.io/autodiag-formation-auto/" title="Module"></iframe>
+      <iframe id="moduleFrame" src="https://expertkevin06-cell.github.io/auto-diagnostic/" title="Module"></iframe>
     </main>
   </div>
 
@@ -110,37 +103,57 @@
       autodiag:   'https://expertkevin06-cell.github.io/autodiag-formation-auto/'
     };
 
+    const moduleFrame = document.getElementById('moduleFrame');
+    const techBaseSelect = document.getElementById('techBaseSelect');
+
     document.getElementById('moduleSelect').addEventListener('change', (e) => {
       const url = modules[e.target.value];
       if (url) {
-        document.getElementById('moduleFrame').src = url;
-        // Réinitialise le filtre quand on change de projet
-        document.getElementById('techBaseSelect').value = "";
+        moduleFrame.src = url;
+        techBaseSelect.value = ""; // Réinitialise le filtre
       }
     });
 
-    // --- 3. GESTION DU FILTRE TECHNIQUE FONCTIONNEL ---
-    document.getElementById('techBaseSelect').addEventListener('change', (e) => {
-      const filterValue = e.target.value;
-      const frame = document.getElementById('moduleFrame');
-      const currentModule = document.getElementById('moduleSelect').value;
+    // --- 3. FONCTION DE PRÉ-FILTRAGE INTERACTIF ---
+    // Cette fonction envoie le composant sélectionné directement dans la page ouverte
+    function envoyerFiltreAuModule(composant) {
+      if (!composant) return; // Si on vide le filtre, on ne fait rien
       
-      if (!filterValue) {
-        // Si on annule le filtre, on remet le module normal
-        frame.src = modules[currentModule];
-        return;
-      }
+      const targetOrigin = 'https://expertkevin06-cell.github.io';
       
-      // On applique le filtre uniquement si on est sur AutoDiag Pro ou Auto-Diagnostic
-      // On ajoute un paramètre dans l'URL (ex: ?search=moteur)
-      if (currentModule === 'autodiag' || currentModule === 'diagnostic') {
-        frame.src = `${modules[currentModule]}?search=${encodeURIComponent(filterValue)}`;
-      } else {
-        alert("Le filtre par composant est optimisé pour les modules AutoDiag Pro et Auto-Diagnostic.");
-        // On remet le module de base pour ne pas bloquer l'utilisateur
-        frame.src = modules[currentModule];
-        e.target.value = ""; 
-      }
+      // On envoie le message à l'iframe
+      moduleFrame.contentWindow.postMessage({
+        action: 'filtrer_par_composant',
+        composant: composant
+      }, targetOrigin);
+      
+      // On attend 500ms que l'iframe réagisse, puis on tente de remplir son champ de recherche
+      setTimeout(() => {
+        try {
+          const innerDoc = moduleFrame.contentWindow.document || moduleFrame.contentDocument;
+          if (!innerDoc) return; // Sécurité anti-CORS
+          
+          // On cherche les champs de recherche typiques dans vos projets
+          const searchInput = innerDoc.querySelector('input[type="text"]') || 
+                              innerDoc.querySelector('input[type="search"]') || 
+                              innerDoc.querySelector('#search') ||
+                              innerDoc.querySelector('.search-input');
+                              
+          if (searchInput) {
+            // On remplit le champ avec le composant choisi
+            searchInput.value = composant;
+            // On simule la saisie pour déclencher le filtre de votre projet
+            searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+            searchInput.dispatchEvent(new Event('keyup', { bubbles: true }));
+          }
+        } catch (err) {
+          console.log("Pré-filtrage direct bloqué, le message postMessage est utilisé en secours.", err);
+        }
+      }, 500);
+    }
+
+    techBaseSelect.addEventListener('change', (e) => {
+      envoyerFiltreAuModule(e.target.value);
     });
   </script>
 
