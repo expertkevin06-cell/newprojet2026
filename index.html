@@ -5,13 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fusion Projet Kevin</title>
   
-  <!-- Lien vers le manifeste pour l'icône et l'application (PWABuilder) -->
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="assets/icon-192.png">
   <meta name="theme-color" content="#1e293b">
 
   <style>
-    /* Styles de base intégrés */
     body { font-family: system-ui, sans-serif; background-color: #0f172a; color: white; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
     
     /* Écran de verrouillage */
@@ -57,22 +55,25 @@
         <option value="tech2026">2026Tech</option>
         <option value="autolegal">Auto-Legal (Lovable)</option>
         <option value="rapport">Expert Auto (Rapport Juridique)</option>
-        <option value="autodiag">AutoDiag Pro (Formation)</option>
+        <option value="autodiag" selected>AutoDiag Pro (Formation)</option>
       </select>
 
+      <!-- Filtre Fonctionnel -->
       <select id="techBaseSelect">
-        <option value="">— Base technique véhicule —</option>
+        <option value="">— Filtrer par composant —</option>
         <option value="moteur">Moteur / Injection</option>
         <option value="freinage">Freinage / ABS</option>
         <option value="electricite">Électricité / Calculateurs</option>
         <option value="carrosserie">Carrosserie / Structure</option>
-        <option value="legal">Cadre juridique véhicule</option>
+        <option value="batterie">Batterie / Hybride</option>
+        <option value="boite">Boîte de vitesses / Embrayage</option>
       </select>
     </div>
 
-    <!-- Zone d'affichage des projets (Iframe) -->
+    <!-- Zone d'affichage des projets -->
     <main>
-      <iframe id="moduleFrame" src="https://expertkevin06-cell.github.io/auto-diagnostic/" title="Module"></iframe>
+      <!-- On démarre sur AutoDiag Pro pour que le filtre soit utile -->
+      <iframe id="moduleFrame" src="https://expertkevin06-cell.github.io/autodiag-formation-auto/" title="Module"></iframe>
     </main>
   </div>
 
@@ -93,7 +94,6 @@
       }
     }
 
-    // Validation avec la touche Entrée
     document.getElementById('passwordInput').addEventListener('keypress', function (e) {
       if (e.key === 'Enter') verifierMotDePasse();
     });
@@ -114,41 +114,33 @@
       const url = modules[e.target.value];
       if (url) {
         document.getElementById('moduleFrame').src = url;
-        // Réinitialise le 2e menu déroulant si on change de projet
+        // Réinitialise le filtre quand on change de projet
         document.getElementById('techBaseSelect').value = "";
       }
     });
 
-    // --- 3. GESTION DES BASES TECHNIQUES ---
-    const techBases = {
-      moteur: "Codes défaut, procédures de diagnostic, schémas d'injection (À compléter).",
-      freinage: "Valeurs de référence, procédures de purge, codes ABS (À compléter).",
-      electricite: "Schémas électriques, affectation des broches, protocoles CAN (À compléter).",
-      carrosserie: "Points de soudure, tolérances de mesure, procédures de redressage (À compléter).",
-      legal: "Qualification juridique, articles applicables, démarches et délais (À compléter)."
-    };
-
+    // --- 3. GESTION DU FILTRE TECHNIQUE FONCTIONNEL ---
     document.getElementById('techBaseSelect').addEventListener('change', (e) => {
-      const key = e.target.value;
+      const filterValue = e.target.value;
       const frame = document.getElementById('moduleFrame');
+      const currentModule = document.getElementById('moduleSelect').value;
       
-      if (!key) {
-        // Si on sélectionne le choix vide, on remet le module principal
-        frame.src = modules[document.getElementById('moduleSelect').value];
+      if (!filterValue) {
+        // Si on annule le filtre, on remet le module normal
+        frame.src = modules[currentModule];
         return;
       }
       
-      // On affiche la base technique dans l'iframe sous forme de texte HTML simple
-      const htmlContent = `
-        <html>
-          <body style="background:#0f172a; color:white; font-family:sans-serif; padding:2rem;">
-            <h2 style="color:#3b82f6;">Base technique : ${e.target.options[e.target.selectedIndex].text}</h2>
-            <p style="color:#94a3b8; margin-top:1rem; line-height:1.5;">${techBases[key]}</p>
-            <p style="color:#475569; margin-top:2rem; font-size:0.8rem;">Contenu à personnaliser avec vos données réelles.</p>
-          </body>
-        </html>
-      `;
-      frame.srcdoc = htmlContent;
+      // On applique le filtre uniquement si on est sur AutoDiag Pro ou Auto-Diagnostic
+      // On ajoute un paramètre dans l'URL (ex: ?search=moteur)
+      if (currentModule === 'autodiag' || currentModule === 'diagnostic') {
+        frame.src = `${modules[currentModule]}?search=${encodeURIComponent(filterValue)}`;
+      } else {
+        alert("Le filtre par composant est optimisé pour les modules AutoDiag Pro et Auto-Diagnostic.");
+        // On remet le module de base pour ne pas bloquer l'utilisateur
+        frame.src = modules[currentModule];
+        e.target.value = ""; 
+      }
     });
   </script>
 
