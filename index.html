@@ -4,10 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fusion Projet Kevin</title>
-  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- Lien vers le manifeste pour l'icône et l'application (PWABuilder) -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <meta name="theme-color" content="#1e293b">
+
   <style>
     /* Styles de base intégrés */
     body { font-family: system-ui, sans-serif; background-color: #0f172a; color: white; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+    
+    /* Écran de verrouillage */
     #lockScreen { position: fixed; inset: 0; background: #0f172a; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
     input[type="password"] { padding: 0.8rem; border-radius: 8px; border: 1px solid #475569; background: #1e293b; color: white; width: 250px; text-align: center; margin-bottom: 1rem; font-size: 1.2rem; }
     button { padding: 0.8rem 2rem; background: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; }
@@ -16,9 +23,9 @@
     
     /* Styles de l'application */
     #appContent { display: flex; flex-direction: column; height: 100vh; }
-    header { padding: 1rem; background: #1e293b; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
+    header { padding: 1rem; background: #1e293b; display: flex; justify-content: space-between; align-items: center; z-index: 10; border-bottom: 1px solid #334155; }
     .filters { padding: 1rem; background: #1e293b; display: flex; gap: 1rem; flex-wrap: wrap; z-index: 10; border-bottom: 1px solid #334155; }
-    select { padding: 0.5rem; border-radius: 6px; background: #0f172a; color: white; border: 1px solid #475569; }
+    select { padding: 0.5rem; border-radius: 6px; background: #0f172a; color: white; border: 1px solid #475569; font-size: 0.95rem; }
     main { flex: 1; position: relative; background: #0f172a; }
     iframe { width: 100%; height: 100%; border: none; }
   </style>
@@ -40,7 +47,7 @@
       <h1 style="margin: 0; font-size: 1.2rem;">Tableau de bord Kevin</h1>
     </header>
     
-    <!-- Filtres -->
+    <!-- Filtres et Menus Déroulants -->
     <div class="filters">
       <select id="moduleSelect">
         <option value="diagnostic">Auto-Diagnostic</option>
@@ -63,7 +70,7 @@
       </select>
     </div>
 
-    <!-- Zone d'affichage des projets -->
+    <!-- Zone d'affichage des projets (Iframe) -->
     <main>
       <iframe id="moduleFrame" src="https://expertkevin06-cell.github.io/auto-diagnostic/" title="Module"></iframe>
     </main>
@@ -86,6 +93,7 @@
       }
     }
 
+    // Validation avec la touche Entrée
     document.getElementById('passwordInput').addEventListener('keypress', function (e) {
       if (e.key === 'Enter') verifierMotDePasse();
     });
@@ -99,12 +107,16 @@
       tech2026:   'https://expertkevin06-cell.github.io/2026tech/',
       autolegal:  'https://auto-legal-by-kevin.lovable.app/',
       rapport:    'https://expertkevin06-cell.github.io/rapport-juridique-precis-tech/',
-      autodiag:   'https://expertkevin06-cell.github.io/autodiag-formation-auto/' // Nouveau module AutoDiag Pro
+      autodiag:   'https://expertkevin06-cell.github.io/autodiag-formation-auto/'
     };
 
     document.getElementById('moduleSelect').addEventListener('change', (e) => {
       const url = modules[e.target.value];
-      if (url) document.getElementById('moduleFrame').src = url;
+      if (url) {
+        document.getElementById('moduleFrame').src = url;
+        // Réinitialise le 2e menu déroulant si on change de projet
+        document.getElementById('techBaseSelect').value = "";
+      }
     });
 
     // --- 3. GESTION DES BASES TECHNIQUES ---
@@ -119,16 +131,22 @@
     document.getElementById('techBaseSelect').addEventListener('change', (e) => {
       const key = e.target.value;
       const frame = document.getElementById('moduleFrame');
+      
       if (!key) {
+        // Si on sélectionne le choix vide, on remet le module principal
         frame.src = modules[document.getElementById('moduleSelect').value];
         return;
       }
+      
       // On affiche la base technique dans l'iframe sous forme de texte HTML simple
       const htmlContent = `
-        <html><body style="background:#0f172a; color:white; font-family:sans-serif; padding:2rem;">
-          <h2>Base technique : ${e.target.options[e.target.selectedIndex].text}</h2>
-          <p style="color:#94a3b8; margin-top:1rem;">${techBases[key]}</p>
-        </body></html>
+        <html>
+          <body style="background:#0f172a; color:white; font-family:sans-serif; padding:2rem;">
+            <h2 style="color:#3b82f6;">Base technique : ${e.target.options[e.target.selectedIndex].text}</h2>
+            <p style="color:#94a3b8; margin-top:1rem; line-height:1.5;">${techBases[key]}</p>
+            <p style="color:#475569; margin-top:2rem; font-size:0.8rem;">Contenu à personnaliser avec vos données réelles.</p>
+          </body>
+        </html>
       `;
       frame.srcdoc = htmlContent;
     });
