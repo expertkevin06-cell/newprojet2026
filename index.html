@@ -3,38 +3,44 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fusion Projet Kevin</title>
+  <title>New Projet 2026 - Kevin</title>
   
+  <!-- ========================================== -->
+  <!-- BALISES D'ICÔNES POUR TOUS LES NAVIGATEURS -->
+  <!-- ========================================== -->
+  <!-- Pour Android / Chrome / PWA -->
   <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="assets/icon-192.png">
+  <!-- Pour les navigateurs modernes (Chrome, Edge, Firefox) -->
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+  <!-- Pour Apple (iPhone / iPad / Safari) -->
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="icon-192.png">
+  <!-- Pour les anciens navigateurs (raccourci) -->
+  <link rel="shortcut icon" href="icon-192.png" type="image/png">
+  
   <meta name="theme-color" content="#1e293b">
 
   <style>
     /* Styles de base intégrés */
     body { font-family: system-ui, sans-serif; background-color: #0f172a; color: white; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
     
-    /* Écran de verrouillage */
     #lockScreen { position: fixed; inset: 0; background: #0f172a; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
     input[type="password"] { padding: 0.8rem; border-radius: 8px; border: 1px solid #475569; background: #1e293b; color: white; width: 250px; text-align: center; margin-bottom: 1rem; font-size: 1.2rem; }
     button { padding: 0.8rem 2rem; background: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; }
     button:active { background: #2563eb; }
     .hidden { display: none !important; }
     
-    /* Styles de l'application */
     #appContent { display: flex; flex-direction: column; height: 100vh; }
     header { padding: 1rem; background: #1e293b; display: flex; justify-content: space-between; align-items: center; z-index: 10; border-bottom: 1px solid #334155; }
     .filters { padding: 1rem; background: #1e293b; display: flex; gap: 1rem; flex-wrap: wrap; z-index: 10; border-bottom: 1px solid #334155; }
-    
-    /* Style du menu déroulant unique */
     select { padding: 0.6rem 1rem; border-radius: 8px; background: #0f172a; color: white; border: 1px solid #475569; font-size: 1rem; width: 100%; max-width: 300px; cursor: pointer; }
-    
     main { flex: 1; position: relative; background: #0f172a; }
     iframe { width: 100%; height: 100%; border: none; }
   </style>
 </head>
 <body>
 
-  <!-- ÉCRAN DE VERROUILLAGE -->
   <div id="lockScreen">
     <h2 style="margin-bottom: 1rem;">Accès protégé</h2>
     <p style="color: #94a3b8; margin-bottom: 1rem;">Entrez le mot de passe administrateur</p>
@@ -43,13 +49,11 @@
     <p id="errorMsg" style="color: #ef4444; margin-top: 1rem; display: none;">Mot de passe incorrect</p>
   </div>
 
-  <!-- VOTRE APPLICATION -->
   <div id="appContent" class="hidden">
     <header>
       <h1 style="margin: 0; font-size: 1.2rem;">Tableau de bord Kevin</h1>
     </header>
     
-    <!-- Menu déroulant unique -->
     <div class="filters">
       <select id="moduleSelect">
         <option value="diagnostic">Auto-Diagnostic</option>
@@ -63,14 +67,12 @@
       </select>
     </div>
 
-    <!-- Zone d'affichage des projets -->
     <main>
       <iframe id="moduleFrame" src="https://expertkevin06-cell.github.io/auto-diagnostic/" title="Module"></iframe>
     </main>
   </div>
 
   <script>
-    // --- 1. GESTION DU MOT DE PASSE ---
     const MOT_DE_PASSE_ADMIN = "Kevin83600";
 
     function verifierMotDePasse() {
@@ -86,12 +88,10 @@
       }
     }
 
-    // Validation avec la touche Entrée
     document.getElementById('passwordInput').addEventListener('keypress', function (e) {
       if (e.key === 'Enter') verifierMotDePasse();
     });
 
-    // --- 2. GESTION DES MODULES (IFRAMES) ---
     const modules = {
       diagnostic: 'https://expertkevin06-cell.github.io/auto-diagnostic/',
       bykevin:    'https://expertkevin06-cell.github.io/bykevin/',
@@ -103,7 +103,6 @@
       autodiag:   'https://expertkevin06-cell.github.io/autodiag-formation-auto/'
     };
 
-    // Changement de projet via le menu déroulant
     document.getElementById('moduleSelect').addEventListener('change', (e) => {
       const url = modules[e.target.value];
       if (url) {
