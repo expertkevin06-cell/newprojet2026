@@ -7,31 +7,45 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+
   <header>
     <h1>Panneau d'administration</h1>
-    <a href="index.html" style="color:#3b82f6;">← Retour</a>
+    <a href="index.html" style="color:#3b82f6;text-decoration:none;">← Retour</a>
   </header>
 
-  <main style="padding: 2rem; position:relative; z-index:1; max-width: 600px; margin: 0 auto;">
-    <!-- Section mot de passe -->
-    <section style="margin-bottom: 2rem;">
+  <main class="admin-main">
+
+    <section class="section card">
       <h2>Mot de passe administrateur</h2>
-      <p id="passwordStatus" style="margin: 0.5rem 0; color: #94a3b8;"></p>
-      <input type="password" id="newPassword" placeholder="Nouveau mot de passe" style="padding:0.5rem; width:100%; margin-bottom:0.5rem; background:#1e293b; border:1px solid #475569; color:white; border-radius:6px;">
-      <button id="savePasswordBtn" style="padding:0.5rem 1rem; background:#3b82f6; color:white; border:none; border-radius:6px;">Enregistrer</button>
+      <p id="passwordStatus"></p>
+      <div class="row">
+        <input type="password" id="newPassword" placeholder="Nouveau mot de passe (min. 8 caractères)" autocomplete="new-password">
+      </div>
+      <div class="row">
+        <input type="password" id="confirmPassword" placeholder="Confirmer le mot de passe" autocomplete="new-password">
+      </div>
+      <div class="row">
+        <button id="savePasswordBtn" class="btn btn-primary">Enregistrer</button>
+        <button id="resetPasswordBtn" class="btn btn-danger">Réinitialiser</button>
+      </div>
+      <p style="color:#64748b;font-size:0.8rem;margin-top:0.5rem;">
+        Le mot de passe est haché avec PBKDF2-SHA256 (600 000 itérations) et un sel aléatoire.
+        Aucune valeur par défaut n'est définie. Pour une sécurité maximale, utilisez un backend.
+      </p>
     </section>
 
-    <!-- Section accès tiers -->
-    <section>
+    <section class="section card">
       <h2>Gestion des accès tiers</h2>
-      <div style="display:flex; gap:0.5rem; margin:0.5rem 0;">
-        <input type="text" id="thirdPartyName" placeholder="Nom du tiers" style="flex:1; padding:0.5rem; background:#1e293b; border:1px solid #475569; color:white; border-radius:6px;">
-        <button id="addAccessBtn" style="padding:0.5rem 1rem; background:#10b981; color:white; border:none; border-radius:6px;">Autoriser</button>
+      <div class="row">
+        <input type="text" id="thirdPartyName" placeholder="Nom du tiers">
+        <button id="addAccessBtn" class="btn btn-success">Autoriser</button>
       </div>
       <div id="accessList"></div>
     </section>
+
   </main>
 
+  <script src="js/crypto-utils.js"></script>
   <script src="js/admin.js"></script>
   <script src="js/third-party.js"></script>
 </body>
