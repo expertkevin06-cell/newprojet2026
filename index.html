@@ -4,16 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fusion Projet Kevin</title>
-  <!-- On garde votre CSS si vous en avez un, sinon on met le style de base ici -->
   <link rel="stylesheet" href="css/style.css">
   <style>
-    /* Styles de secours au cas où le CSS externe ne charge pas */
-    body { font-family: system-ui, sans-serif; background-color: #0f172a; color: white; margin: 0; }
+    /* Styles de base intégrés */
+    body { font-family: system-ui, sans-serif; background-color: #0f172a; color: white; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
     #lockScreen { position: fixed; inset: 0; background: #0f172a; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
     input[type="password"] { padding: 0.8rem; border-radius: 8px; border: 1px solid #475569; background: #1e293b; color: white; width: 250px; text-align: center; margin-bottom: 1rem; font-size: 1.2rem; }
     button { padding: 0.8rem 2rem; background: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; }
     button:active { background: #2563eb; }
-    .hidden { display: none; }
+    .hidden { display: none !important; }
+    
+    /* Styles de l'application */
+    #appContent { display: flex; flex-direction: column; height: 100vh; }
+    header { padding: 1rem; background: #1e293b; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
+    .filters { padding: 1rem; background: #1e293b; display: flex; gap: 1rem; flex-wrap: wrap; z-index: 10; border-bottom: 1px solid #334155; }
+    select { padding: 0.5rem; border-radius: 6px; background: #0f172a; color: white; border: 1px solid #475569; }
+    main { flex: 1; position: relative; background: #0f172a; }
+    iframe { width: 100%; height: 100%; border: none; }
   </style>
 </head>
 <body>
@@ -22,59 +29,104 @@
   <div id="lockScreen">
     <h2 style="margin-bottom: 1rem;">Accès protégé</h2>
     <p style="color: #94a3b8; margin-bottom: 1rem;">Entrez le mot de passe administrateur</p>
-    
-    <!-- Le mot de passe est vérifié ici -->
     <input type="password" id="passwordInput" placeholder="Mot de passe" autocomplete="off">
-    
     <button onclick="verifierMotDePasse()">Déverrouiller</button>
-    
     <p id="errorMsg" style="color: #ef4444; margin-top: 1rem; display: none;">Mot de passe incorrect</p>
   </div>
 
-  <!-- VOTRE APPLICATION (Cachée au démarrage) -->
+  <!-- VOTRE APPLICATION -->
   <div id="appContent" class="hidden">
-    <header style="padding: 1rem; background: #1e293b; display: flex; justify-content: space-between; align-items: center;">
+    <header>
       <h1 style="margin: 0; font-size: 1.2rem;">Tableau de bord Kevin</h1>
-      <button style="padding: 0.5rem 1rem; font-size: 0.9rem;">Mode Admin</button>
     </header>
     
-    <main style="padding: 2rem;">
-      <h2>Bienvenue Kevin</h2>
-      <p style="color: #94a3b8;">Vous êtes connecté en tant qu'administrateur.</p>
-      
-      <div style="margin-top: 2rem; padding: 2rem; background: #1e293b; border-radius: 8px; border: 1px dashed #475569; text-align: center; color: #94a3b8;">
-        Vos modules (2026Tech, Auto-Legal, etc.) s'afficheront ici.
-      </div>
+    <!-- Filtres -->
+    <div class="filters">
+      <select id="moduleSelect">
+        <option value="diagnostic">Auto-Diagnostic</option>
+        <option value="bykevin">ByKevin</option>
+        <option value="aide">Aide Technique</option>
+        <option value="incendie">Étude Incendie</option>
+        <option value="tech2026">2026Tech</option>
+        <option value="autolegal">Auto-Legal (Lovable)</option>
+      </select>
+
+      <select id="techBaseSelect">
+        <option value="">— Base technique véhicule —</option>
+        <option value="moteur">Moteur / Injection</option>
+        <option value="freinage">Freinage / ABS</option>
+        <option value="electricite">Électricité / Calculateurs</option>
+        <option value="carrosserie">Carrosserie / Structure</option>
+        <option value="legal">Cadre juridique véhicule</option>
+      </select>
+    </div>
+
+    <!-- Zone d'affichage des projets -->
+    <main>
+      <iframe id="moduleFrame" src="https://expertkevin06-cell.github.io/auto-diagnostic/" title="Module"></iframe>
     </main>
   </div>
 
-  <!-- SCRIPT INTÉGRÉ DIRECTEMENT ICI POUR ÉVITER LES ERREURS DE CHARGEMENT -->
   <script>
-    // Le mot de passe attendu
+    // --- 1. GESTION DU MOT DE PASSE ---
     const MOT_DE_PASSE_ADMIN = "Kevin83600";
 
     function verifierMotDePasse() {
-      // On récupère ce que l'utilisateur a tapé
       const saisie = document.getElementById('passwordInput').value;
       const erreur = document.getElementById('errorMsg');
       
-      // On compare
       if (saisie === MOT_DE_PASSE_ADMIN) {
-        // Si c'est bon : on cache le cadenas, on montre l'application
         document.getElementById('lockScreen').style.display = 'none';
         document.getElementById('appContent').classList.remove('hidden');
       } else {
-        // Si c'est faux : on affiche l'erreur
         erreur.style.display = 'block';
-        document.getElementById('passwordInput').value = ''; // On vide le champ
+        document.getElementById('passwordInput').value = '';
       }
     }
 
-    // Permettre de valider avec la touche "Entrée" du clavier
     document.getElementById('passwordInput').addEventListener('keypress', function (e) {
-      if (e.key === 'Enter') {
-        verifierMotDePasse();
+      if (e.key === 'Enter') verifierMotDePasse();
+    });
+
+    // --- 2. GESTION DES MODULES (IFRAMES) ---
+    const modules = {
+      diagnostic: 'https://expertkevin06-cell.github.io/auto-diagnostic/',
+      bykevin:    'https://expertkevin06-cell.github.io/bykevin/',
+      aide:       'https://expertkevin06-cell.github.io/mon-aide-technique/',
+      incendie:   'https://expertkevin06-cell.github.io/etude-incendie-by-kevin/',
+      tech2026:   'https://expertkevin06-cell.github.io/2026tech/',
+      autolegal:  'https://auto-legal-by-kevin.lovable.app/'
+    };
+
+    document.getElementById('moduleSelect').addEventListener('change', (e) => {
+      const url = modules[e.target.value];
+      if (url) document.getElementById('moduleFrame').src = url;
+    });
+
+    // --- 3. GESTION DES BASES TECHNIQUES ---
+    const techBases = {
+      moteur: "Codes défaut, procédures de diagnostic, schémas d'injection (À compléter).",
+      freinage: "Valeurs de référence, procédures de purge, codes ABS (À compléter).",
+      electricite: "Schémas électriques, affectation des broches, protocoles CAN (À compléter).",
+      carrosserie: "Points de soudure, tolérances de mesure, procédures de redressage (À compléter).",
+      legal: "Qualification juridique, articles applicables, démarches et délais (À compléter)."
+    };
+
+    document.getElementById('techBaseSelect').addEventListener('change', (e) => {
+      const key = e.target.value;
+      const frame = document.getElementById('moduleFrame');
+      if (!key) {
+        frame.src = modules[document.getElementById('moduleSelect').value];
+        return;
       }
+      // On affiche la base technique dans l'iframe sous forme de texte HTML simple
+      const htmlContent = `
+        <html><body style="background:#0f172a; color:white; font-family:sans-serif; padding:2rem;">
+          <h2>Base technique : ${e.target.options[e.target.selectedIndex].text}</h2>
+          <p style="color:#94a3b8; margin-top:1rem;">${techBases[key]}</p>
+        </body></html>
+      `;
+      frame.srcdoc = htmlContent;
     });
   </script>
 
