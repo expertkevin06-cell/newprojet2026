@@ -1,20 +1,21 @@
 {
-  "name": "Fusion Projet Kevin",
-  "short_name": "KevinFusion",
-  "start_url": "/",
+  "name": "New Projet 2026",
+  "short_name": "NewProjet2026",
+  "start_url": "/newprojet2026/",
+  "scope": "/newprojet2026/",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#1e293b",
-  "description": "Tableau de bord Kevin",
+  "description": "Tableau de bord Kevin - New Projet 2026",
   "icons": [
     {
-      "src": "assets/icon-192.png",
+      "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "assets/icon-512.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
