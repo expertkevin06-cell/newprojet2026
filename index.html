@@ -4,39 +4,79 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fusion Projet Kevin</title>
+  <!-- On garde votre CSS si vous en avez un, sinon on met le style de base ici -->
   <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Styles de secours au cas où le CSS externe ne charge pas */
+    body { font-family: system-ui, sans-serif; background-color: #0f172a; color: white; margin: 0; }
+    #lockScreen { position: fixed; inset: 0; background: #0f172a; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    input[type="password"] { padding: 0.8rem; border-radius: 8px; border: 1px solid #475569; background: #1e293b; color: white; width: 250px; text-align: center; margin-bottom: 1rem; font-size: 1.2rem; }
+    button { padding: 0.8rem 2rem; background: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; }
+    button:active { background: #2563eb; }
+    .hidden { display: none; }
+  </style>
 </head>
 <body>
 
-  <!-- ÉCRAN DE VERROUILLAGE AU DÉMARRAGE -->
-  <div id="lockScreen" style="position:fixed; inset:0; background:#0f172a; z-index:9999; display:flex; flex-direction:column; justify-content:center; align-items:center; color:white; font-family:sans-serif;">
-    <h2 style="margin-bottom:1rem;">Accès protégé</h2>
-    <p style="color:#94a3b8; margin-bottom:1rem;">Entrez le mot de passe administrateur</p>
-    <input type="password" id="passwordInput" placeholder="Mot de passe" style="padding:0.8rem; border-radius:8px; border:1px solid #475569; background:#1e293b; color:white; width:250px; text-align:center; margin-bottom:1rem;">
-    <button onclick="checkPassword()" style="padding:0.8rem 2rem; background:#3b82f6; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Déverrouiller</button>
-    <p id="errorMsg" style="color:#ef4444; margin-top:1rem; display:none;">Mot de passe incorrect</p>
+  <!-- ÉCRAN DE VERROUILLAGE -->
+  <div id="lockScreen">
+    <h2 style="margin-bottom: 1rem;">Accès protégé</h2>
+    <p style="color: #94a3b8; margin-bottom: 1rem;">Entrez le mot de passe administrateur</p>
+    
+    <!-- Le mot de passe est vérifié ici -->
+    <input type="password" id="passwordInput" placeholder="Mot de passe" autocomplete="off">
+    
+    <button onclick="verifierMotDePasse()">Déverrouiller</button>
+    
+    <p id="errorMsg" style="color: #ef4444; margin-top: 1rem; display: none;">Mot de passe incorrect</p>
   </div>
 
-  <!-- LE RESTE DE VOTRE APPLICATION (masqué au démarrage) -->
-  <div id="appContent" style="display:none;">
-    <!-- En-tête -->
-    <header style="padding:1rem; background:#1e293b; display:flex; justify-content:space-between; align-items:center;">
-      <h1 style="margin:0; font-size:1.2rem; color:white;">Tableau de bord Kevin</h1>
-      <button id="adminBtn" style="padding:0.5rem 1rem; background:#3b82f6; color:white; border:none; border-radius:6px; cursor:pointer;">Mode Admin</button>
+  <!-- VOTRE APPLICATION (Cachée au démarrage) -->
+  <div id="appContent" class="hidden">
+    <header style="padding: 1rem; background: #1e293b; display: flex; justify-content: space-between; align-items: center;">
+      <h1 style="margin: 0; font-size: 1.2rem;">Tableau de bord Kevin</h1>
+      <button style="padding: 0.5rem 1rem; font-size: 0.9rem;">Mode Admin</button>
     </header>
     
-    <!-- Contenu principal -->
     <main style="padding: 2rem;">
-      <h2 style="color:white;">Bienvenue Kevin</h2>
-      <p style="color:#94a3b8;">Votre application est déverrouillée.</p>
+      <h2>Bienvenue Kevin</h2>
+      <p style="color: #94a3b8;">Vous êtes connecté en tant qu'administrateur.</p>
       
-      <!-- Zone pour vos projets existants (iframes, etc.) -->
       <div style="margin-top: 2rem; padding: 2rem; background: #1e293b; border-radius: 8px; border: 1px dashed #475569; text-align: center; color: #94a3b8;">
-        Intégrez ici vos projets (Auto-diagnostic, Bykevin, 2026Tech, Auto-Legal, etc.)
+        Vos modules (2026Tech, Auto-Legal, etc.) s'afficheront ici.
       </div>
     </main>
   </div>
 
-  <script src="js/app.js"></script>
+  <!-- SCRIPT INTÉGRÉ DIRECTEMENT ICI POUR ÉVITER LES ERREURS DE CHARGEMENT -->
+  <script>
+    // Le mot de passe attendu
+    const MOT_DE_PASSE_ADMIN = "Kevin83600";
+
+    function verifierMotDePasse() {
+      // On récupère ce que l'utilisateur a tapé
+      const saisie = document.getElementById('passwordInput').value;
+      const erreur = document.getElementById('errorMsg');
+      
+      // On compare
+      if (saisie === MOT_DE_PASSE_ADMIN) {
+        // Si c'est bon : on cache le cadenas, on montre l'application
+        document.getElementById('lockScreen').style.display = 'none';
+        document.getElementById('appContent').classList.remove('hidden');
+      } else {
+        // Si c'est faux : on affiche l'erreur
+        erreur.style.display = 'block';
+        document.getElementById('passwordInput').value = ''; // On vide le champ
+      }
+    }
+
+    // Permettre de valider avec la touche "Entrée" du clavier
+    document.getElementById('passwordInput').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        verifierMotDePasse();
+      }
+    });
+  </script>
+
 </body>
 </html>
