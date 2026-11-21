@@ -3,32 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fusion Kevin</title>
+  <meta name="theme-color" content="#1e293b">
+  <title>Fusion Projet Kevin</title>
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-  <!-- Arrière-plan animé -->
   <div class="bg-layer">
     <img src="assets/car.png" class="moving-car" alt="">
     <img src="assets/justice.png" class="walking-goddess" alt="">
   </div>
 
-  <!-- En-tête avec bouton administrateur -->
   <header>
     <h1>Tableau de bord Kevin</h1>
     <button id="adminBtn" class="hidden">Mode Admin</button>
   </header>
 
-  <!-- Zone de filtres -->
   <section class="filters">
     <select id="moduleSelect">
       <option value="diagnostic">Auto-Diagnostic</option>
       <option value="bykevin">ByKevin</option>
       <option value="aide">Aide Technique</option>
       <option value="incendie">Étude Incendie</option>
-      <option value="legal">Auto-Legal</option>
+      <option value="tech2026">2026Tech</option>
+      <option value="autolegal">Auto-Legal (Lovable)</option>
+    </select>
+
+    <select id="techBaseSelect">
+      <option value="">— Base technique véhicule —</option>
+      <option value="moteur">Moteur / Injection</option>
+      <option value="freinage">Freinage / ABS</option>
+      <option value="electricite">Électricité / Calculateurs</option>
+      <option value="carrosserie">Carrosserie / Structure</option>
+      <option value="legal">Cadre juridique véhicule</option>
     </select>
 
     <label><input type="checkbox" value="urgence" checked> Urgence</label>
@@ -36,12 +44,17 @@
     <label><input type="checkbox" value="archive"> Archive</label>
   </section>
 
-  <!-- Conteneur où les modules fusionnés seront chargés -->
+  <section id="techPanel">
+    <div id="techContent">
+      <p style="color:#94a3b8;">Sélectionnez une base technique dans le menu déroulant.</p>
+    </div>
+  </section>
+
   <main id="moduleContainer">
-    <!-- Par défaut, affichage de l'auto-diagnostic -->
-    <iframe id="moduleFrame" src="https://expertkevin06-cell.github.io/auto-diagnostic/"></iframe>
+    <iframe id="moduleFrame" src="https://expertkevin06-cell.github.io/auto-diagnostic/" title="Module"></iframe>
   </main>
 
+  <script src="js/crypto-utils.js"></script>
   <script src="js/app.js"></script>
   <script src="js/third-party.js"></script>
 </body>
