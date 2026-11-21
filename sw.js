@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kevin-fusion-v2';
+const CACHE_NAME = 'kevin-fusion-v7';
 const ASSETS = [
   '/', '/index.html', '/admin.html', '/manifest.json',
   '/css/style.css',
