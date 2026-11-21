@@ -10,17 +10,24 @@
   <meta name="theme-color" content="#1e293b">
 
   <style>
+    /* Styles de base intégrés */
     body { font-family: system-ui, sans-serif; background-color: #0f172a; color: white; margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+    
+    /* Écran de verrouillage */
     #lockScreen { position: fixed; inset: 0; background: #0f172a; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; }
     input[type="password"] { padding: 0.8rem; border-radius: 8px; border: 1px solid #475569; background: #1e293b; color: white; width: 250px; text-align: center; margin-bottom: 1rem; font-size: 1.2rem; }
     button { padding: 0.8rem 2rem; background: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 1rem; }
     button:active { background: #2563eb; }
     .hidden { display: none !important; }
     
+    /* Styles de l'application */
     #appContent { display: flex; flex-direction: column; height: 100vh; }
     header { padding: 1rem; background: #1e293b; display: flex; justify-content: space-between; align-items: center; z-index: 10; border-bottom: 1px solid #334155; }
     .filters { padding: 1rem; background: #1e293b; display: flex; gap: 1rem; flex-wrap: wrap; z-index: 10; border-bottom: 1px solid #334155; }
-    select { padding: 0.5rem; border-radius: 6px; background: #0f172a; color: white; border: 1px solid #475569; font-size: 0.95rem; }
+    
+    /* Style du menu déroulant unique */
+    select { padding: 0.6rem 1rem; border-radius: 8px; background: #0f172a; color: white; border: 1px solid #475569; font-size: 1rem; width: 100%; max-width: 300px; cursor: pointer; }
+    
     main { flex: 1; position: relative; background: #0f172a; }
     iframe { width: 100%; height: 100%; border: none; }
   </style>
@@ -42,6 +49,7 @@
       <h1 style="margin: 0; font-size: 1.2rem;">Tableau de bord Kevin</h1>
     </header>
     
+    <!-- Menu déroulant unique -->
     <div class="filters">
       <select id="moduleSelect">
         <option value="diagnostic">Auto-Diagnostic</option>
@@ -53,18 +61,9 @@
         <option value="rapport">Expert Auto (Rapport Juridique)</option>
         <option value="autodiag">AutoDiag Pro (Formation)</option>
       </select>
-
-      <select id="techBaseSelect">
-        <option value="">— Filtrer par composant —</option>
-        <option value="moteur">Moteur / Injection</option>
-        <option value="freinage">Freinage / ABS</option>
-        <option value="electricite">Électricité / Calculateurs</option>
-        <option value="carrosserie">Carrosserie / Structure</option>
-        <option value="batterie">Batterie / Hybride</option>
-        <option value="boite">Boîte de vitesses / Embrayage</option>
-      </select>
     </div>
 
+    <!-- Zone d'affichage des projets -->
     <main>
       <iframe id="moduleFrame" src="https://expertkevin06-cell.github.io/auto-diagnostic/" title="Module"></iframe>
     </main>
@@ -87,6 +86,7 @@
       }
     }
 
+    // Validation avec la touche Entrée
     document.getElementById('passwordInput').addEventListener('keypress', function (e) {
       if (e.key === 'Enter') verifierMotDePasse();
     });
@@ -103,57 +103,12 @@
       autodiag:   'https://expertkevin06-cell.github.io/autodiag-formation-auto/'
     };
 
-    const moduleFrame = document.getElementById('moduleFrame');
-    const techBaseSelect = document.getElementById('techBaseSelect');
-
+    // Changement de projet via le menu déroulant
     document.getElementById('moduleSelect').addEventListener('change', (e) => {
       const url = modules[e.target.value];
       if (url) {
-        moduleFrame.src = url;
-        techBaseSelect.value = ""; // Réinitialise le filtre
+        document.getElementById('moduleFrame').src = url;
       }
-    });
-
-    // --- 3. FONCTION DE PRÉ-FILTRAGE INTERACTIF ---
-    // Cette fonction envoie le composant sélectionné directement dans la page ouverte
-    function envoyerFiltreAuModule(composant) {
-      if (!composant) return; // Si on vide le filtre, on ne fait rien
-      
-      const targetOrigin = 'https://expertkevin06-cell.github.io';
-      
-      // On envoie le message à l'iframe
-      moduleFrame.contentWindow.postMessage({
-        action: 'filtrer_par_composant',
-        composant: composant
-      }, targetOrigin);
-      
-      // On attend 500ms que l'iframe réagisse, puis on tente de remplir son champ de recherche
-      setTimeout(() => {
-        try {
-          const innerDoc = moduleFrame.contentWindow.document || moduleFrame.contentDocument;
-          if (!innerDoc) return; // Sécurité anti-CORS
-          
-          // On cherche les champs de recherche typiques dans vos projets
-          const searchInput = innerDoc.querySelector('input[type="text"]') || 
-                              innerDoc.querySelector('input[type="search"]') || 
-                              innerDoc.querySelector('#search') ||
-                              innerDoc.querySelector('.search-input');
-                              
-          if (searchInput) {
-            // On remplit le champ avec le composant choisi
-            searchInput.value = composant;
-            // On simule la saisie pour déclencher le filtre de votre projet
-            searchInput.dispatchEvent(new Event('input', { bubbles: true }));
-            searchInput.dispatchEvent(new Event('keyup', { bubbles: true }));
-          }
-        } catch (err) {
-          console.log("Pré-filtrage direct bloqué, le message postMessage est utilisé en secours.", err);
-        }
-      }, 500);
-    }
-
-    techBaseSelect.addEventListener('change', (e) => {
-      envoyerFiltreAuModule(e.target.value);
     });
   </script>
 
